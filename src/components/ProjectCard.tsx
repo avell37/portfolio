@@ -8,6 +8,64 @@ type ProjectCardProps = {
     index: number;
 };
 
+function ProjectLinks({ project }: { project: Project }) {
+    if (!project.liveUrl && !project.repoUrl) {
+        return null;
+    }
+
+    return (
+        <div className="flex flex-wrap gap-3">
+            {project.liveUrl && (
+                <a
+                    href={project.liveUrl}
+                    className="rounded-lg bg-white px-4 py-2 text-xs font-semibold text-slate-900 transition-transform hover:scale-105"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Открыть сайт
+                </a>
+            )}
+            {project.repoUrl && (
+                <a
+                    href={project.repoUrl}
+                    className="rounded-lg border border-white/20 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/10"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    GitHub
+                </a>
+            )}
+        </div>
+    );
+}
+
+function ProjectStack({
+    project,
+    variant,
+}: {
+    project: Project;
+    variant: "front" | "detail";
+}) {
+    const chipClassName =
+        variant === "front"
+            ? "rounded-md bg-black/30 px-2 py-0.5 text-xs font-medium text-white/90 backdrop-blur-sm"
+            : "rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-300";
+
+    return (
+        <ul
+            className="flex flex-wrap gap-1.5"
+            role="list"
+            aria-label={`Стек: ${project.title}`}
+        >
+            {project.stack.map((tech) => (
+                <li key={tech}>
+                    <span className={chipClassName}>{tech}</span>
+                </li>
+            ))}
+        </ul>
+    );
+}
+
 export function ProjectCard({ project, index }: ProjectCardProps) {
     return (
         <motion.article
@@ -19,10 +77,10 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 duration: 0.6,
                 ease: [0.22, 1, 0.36, 1],
             }}
-            className="group relative h-80 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50"
+            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 md:h-80"
         >
             <div
-                className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-80 transition-opacity duration-500 group-hover:opacity-60`}
+                className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-80 transition-opacity duration-500 md:group-hover:opacity-60`}
                 aria-hidden="true"
             />
 
@@ -31,7 +89,24 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 aria-hidden="true"
             />
 
-            <div className="relative flex h-full flex-col justify-between p-6">
+            <div className="relative md:hidden">
+                <div
+                    className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+                    aria-hidden="true"
+                />
+                <div className="relative flex flex-col gap-4 p-6">
+                    <h3 className="text-xl font-bold text-white">
+                        {project.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-slate-300">
+                        {project.fullDescription}
+                    </p>
+                    <ProjectStack project={project} variant="detail" />
+                    <ProjectLinks project={project} />
+                </div>
+            </div>
+
+            <div className="relative hidden h-full flex-col justify-between p-6 md:flex">
                 <div>
                     <h3 className="text-xl font-bold text-white">
                         {project.title}
@@ -41,56 +116,19 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                     </p>
                 </div>
 
-                <ul
-                    className="flex flex-wrap gap-1.5"
-                    role="list"
-                    aria-label={`Стек: ${project.title}`}
-                >
-                    {project.stack.map((tech) => (
-                        <li key={tech}>
-                            <span className="rounded-md bg-black/30 px-2 py-0.5 text-xs font-medium text-white/90 backdrop-blur-sm">
-                                {tech}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
+                <ProjectStack project={project} variant="front" />
             </div>
 
-            <div className="absolute inset-0 flex translate-y-full flex-col justify-end bg-slate-950/95 p-6 backdrop-blur-md transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0">
+            <div className="absolute inset-0 hidden translate-y-full flex-col justify-end bg-slate-950/95 p-6 backdrop-blur-md transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex md:group-hover:translate-y-0">
                 <p className="mb-4 text-xs leading-relaxed text-slate-300">
                     {project.fullDescription}
                 </p>
 
-                <ul className="mb-4 flex flex-wrap gap-1.5" role="list">
-                    {project.stack.map((tech) => (
-                        <li key={tech}>
-                            <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-300">
-                                {tech}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-
-                <div className="flex gap-3">
-                    {project.liveUrl && (
-                        <a
-                            href={project.liveUrl}
-                            className="rounded-lg bg-white px-4 py-2 text-xs font-semibold text-slate-900 transition-transform hover:scale-105"
-                            target="_blank"
-                        >
-                            Открыть сайт
-                        </a>
-                    )}
-                    {project.repoUrl && (
-                        <a
-                            href={project.repoUrl}
-                            className="rounded-lg border border-white/20 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/10"
-                            target="_blank"
-                        >
-                            GitHub
-                        </a>
-                    )}
+                <div className="mb-4">
+                    <ProjectStack project={project} variant="detail" />
                 </div>
+
+                <ProjectLinks project={project} />
             </div>
         </motion.article>
     );

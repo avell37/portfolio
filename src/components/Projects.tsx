@@ -25,7 +25,13 @@ export function Projects() {
                         Избранные проекты
                     </h2>
                     <p className="mt-3 max-w-2xl text-slate-400">
-                        Наведи на карточку — увидишь подробности, стек и ссылки.
+                        <span className="md:hidden">
+                            Подробности, стек и ссылки к каждому проекту.
+                        </span>
+                        <span className="hidden md:inline">
+                            Наведи на карточку — увидишь подробности, стек и
+                            ссылки.
+                        </span>
                     </p>
                 </header>
 
